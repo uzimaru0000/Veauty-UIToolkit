@@ -12,7 +12,7 @@ namespace Veauty.UIToolkit.Tests
         {
             var tree = V.Label("Hello");
             Assert.IsNotNull(tree);
-            Assert.AreEqual(VTreeType.Widget, tree.GetNodeType());
+            Assert.AreEqual(VTreeType.Node, tree.GetNodeType());
         }
 
         [Test]
@@ -20,7 +20,7 @@ namespace Veauty.UIToolkit.Tests
         {
             var element = V.Button(text: "Click");
             Assert.IsNotNull(element);
-            var tree = element.Render();
+            var tree = element.Unwrap();
             Assert.IsNotNull(tree);
         }
 
@@ -97,6 +97,35 @@ namespace Veauty.UIToolkit.Tests
         }
 
         [Test]
+        public void Element_Indexer_AcceptsEnumerableChildren()
+        {
+            var children = new[] { V.Label("A"), V.Label("B") };
+            var tree = V.Column()[children];
+            var ve = Renderer.Render(tree);
+            Assert.AreEqual(2, ve.childCount);
+        }
+
+        [Test]
+        public void Children_FiltersNullEntries()
+        {
+            var children = V.Children(V.Label("A"), null, V.Label("B"));
+            Assert.AreEqual(2, children.Length);
+        }
+
+        [Test]
+        public void Classes_FiltersEmptyClassNames()
+        {
+            var tree = V.Label("A", extras: new IAttribute<VisualElement>[]
+            {
+                V.Classes("alpha", "", null, "beta")
+            });
+            var ve = Renderer.Render(tree);
+            Assert.IsTrue(ve.ClassListContains("alpha"));
+            Assert.IsTrue(ve.ClassListContains("beta"));
+            Assert.IsFalse(ve.ClassListContains(""));
+        }
+
+        [Test]
         public void Render_Label()
         {
             var tree = V.Label("Hello");
@@ -109,7 +138,7 @@ namespace Veauty.UIToolkit.Tests
         [Test]
         public void Render_Button()
         {
-            var tree = V.Button(text: "Click").Render();
+            var tree = V.Button(text: "Click").Unwrap();
             var ve = Renderer.Render(tree);
             Assert.IsNotNull(ve);
             Assert.IsInstanceOf<UnityEngine.UIElements.Button>(ve);
@@ -130,8 +159,8 @@ namespace Veauty.UIToolkit.Tests
         [Test]
         public void Diff_NoChange_NoPatch()
         {
-            var tree1 = V.Label("Hello");
-            var tree2 = V.Label("Hello");
+            var tree1 = Resolve(V.Label("Hello"));
+            var tree2 = Resolve(V.Label("Hello"));
             var patches = Diff<VisualElement>.Calc(tree1, tree2);
             Assert.AreEqual(0, patches.Length);
         }
@@ -139,8 +168,8 @@ namespace Veauty.UIToolkit.Tests
         [Test]
         public void Diff_TextChange_ProducesPatch()
         {
-            var tree1 = V.Label("Hello");
-            var tree2 = V.Label("World");
+            var tree1 = Resolve(V.Label("Hello"));
+            var tree2 = Resolve(V.Label("World"));
             var patches = Diff<VisualElement>.Calc(tree1, tree2);
             Assert.Greater(patches.Length, 0);
         }
@@ -148,8 +177,8 @@ namespace Veauty.UIToolkit.Tests
         [Test]
         public void Patch_AppliesTextChange()
         {
-            var tree1 = V.Label("Hello");
-            var tree2 = V.Label("World");
+            var tree1 = Resolve(V.Label("Hello"));
+            var tree2 = Resolve(V.Label("World"));
             var ve = Renderer.Render(tree1);
             var patches = Diff<VisualElement>.Calc(tree1, tree2);
             ve = Patch.Apply(ve, tree1, patches);
@@ -167,6 +196,11 @@ namespace Veauty.UIToolkit.Tests
             });
             var ve = Renderer.Render(tree);
             Assert.AreEqual(UnityEngine.Color.red, ve.resolvedStyle.backgroundColor);
+        }
+
+        private static IVTree Resolve(IVTree tree)
+        {
+            return new HookRuntime().Resolve<VisualElement>(tree);
         }
     }
 }

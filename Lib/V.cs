@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
 using Veauty.VTree;
@@ -8,6 +9,18 @@ namespace Veauty.UIToolkit.Presets
 {
     public static class V
     {
+        public static IVTree[] Children(IEnumerable<IVTree> children) =>
+            children?.Where(child => child != null).ToArray() ?? Array.Empty<IVTree>();
+
+        public static IVTree[] Children(params IVTree[] children) =>
+            Children((IEnumerable<IVTree>)children);
+
+        public static ClassList Classes(params string[] classNames) =>
+            new ClassList(classNames?.Where(c => !string.IsNullOrWhiteSpace(c)).ToArray() ?? Array.Empty<string>());
+
+        public static ClassList Classes(IEnumerable<string> classNames) =>
+            new ClassList(classNames?.Where(c => !string.IsNullOrWhiteSpace(c)).ToArray() ?? Array.Empty<string>());
+
         public static IVTree Label(string text,
             string className = null,
             params IAttribute<VisualElement>[] extras)

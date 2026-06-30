@@ -6,14 +6,22 @@ namespace Veauty.UIToolkit
 {
     public interface ISubComponent { }
 
-    public abstract class UIBase<T> : Widget<VisualElement> where T : VisualElement
+    public abstract class UIBase<T> :
+        Node<VisualElement, T>,
+        IHostLifecycle<VisualElement>,
+        IHostLifecycleTree<VisualElement>
+        where T : VisualElement
     {
-        protected UIBase(IEnumerable<IAttribute<VisualElement>> attrs, params IVTree[] kids) : base(attrs, kids) { }
+        protected UIBase(IEnumerable<IAttribute<VisualElement>> attrs, params IVTree[] kids)
+            : base(typeof(T).FullName, attrs, kids)
+        {
+        }
 
-        public override IVTree Render() => new Node<VisualElement, T>(typeof(T).FullName, attrs, GetKids());
-
-        public override VisualElement Init(VisualElement ve) => ve;
-        public override void Destroy(VisualElement ve) { }
+        public virtual VisualElement Init(VisualElement ve) => ve;
+        public virtual void Destroy(VisualElement ve) { }
+        public virtual void AfterRenderKids(VisualElement ve) { }
+        public IHostLifecycle<VisualElement>[] GetHostLifecycles()
+            => new IHostLifecycle<VisualElement>[] { this };
 
         protected T FindPart<T>() where T : class
         {

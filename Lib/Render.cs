@@ -8,39 +8,36 @@ namespace Veauty.UIToolkit
     {
         public static VisualElement Render(IVTree vTree)
         {
+            if (vTree is IVTreeWrapper wrapper)
+            {
+                return Render(wrapper.Unwrap());
+            }
+
+            if (vTree is FunctionComponentNode)
+            {
+                var runtime = new HookRuntime();
+                var resolved = runtime.Resolve<VisualElement>(vTree);
+                var rendered = RenderResolved(resolved);
+                runtime.CommitEffects();
+                return rendered;
+            }
+
+            return RenderResolved(vTree);
+        }
+
+        private static VisualElement RenderResolved(IVTree vTree)
+        {
             switch (vTree)
             {
                 case NodeBase<VisualElement> vNode:
                     var ve = CreateElement(vNode);
+                    InitHostLifecycles(ve, vNode);
                     ApplyAttrs(ve, vNode);
                     RenderKids(ve, vNode);
+                    AfterRenderKids(ve, vNode);
                     return ve;
-                case Widget<VisualElement> widget:
-                    return RenderWidget(widget);
                 default:
                     throw new ArgumentException($"Unsupported IVTree type: {vTree.GetType()}");
-            }
-        }
-
-        private static VisualElement RenderWidget(Widget<VisualElement> widget)
-        {
-            var tree = widget.Render();
-            switch (tree)
-            {
-                case Widget<VisualElement> nest:
-                    var ve = Render(nest);
-                    widget.Init(ve);
-                    widget.AfterRenderKids(ve);
-                    return ve;
-                case BaseNode<VisualElement> node:
-                    var nodeVe = CreateElement(node);
-                    widget.Init(nodeVe);
-                    ApplyAttrs(nodeVe, node);
-                    RenderKids(nodeVe, node);
-                    widget.AfterRenderKids(nodeVe);
-                    return nodeVe;
-                default:
-                    throw new ArgumentException($"Unsupported IVTree type: {tree.GetType()}");
             }
         }
 
@@ -79,6 +76,24 @@ namespace Veauty.UIToolkit
             foreach (var attr in node.attrs.attrs)
             {
                 attr.Value.Apply(ve);
+            }
+        }
+
+        private static void InitHostLifecycles(VisualElement ve, IVTree tree)
+        {
+            if (!(tree is IHostLifecycleTree<VisualElement> lifecycleTree)) return;
+            foreach (var lifecycle in lifecycleTree.GetHostLifecycles())
+            {
+                lifecycle.Init(ve);
+            }
+        }
+
+        private static void AfterRenderKids(VisualElement ve, IVTree tree)
+        {
+            if (!(tree is IHostLifecycleTree<VisualElement> lifecycleTree)) return;
+            foreach (var lifecycle in lifecycleTree.GetHostLifecycles())
+            {
+                lifecycle.AfterRenderKids(ve);
             }
         }
     }

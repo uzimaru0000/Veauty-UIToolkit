@@ -41,11 +41,11 @@ namespace Veauty.UIToolkit
                 switch (patch)
                 {
                     case Redraw<VisualElement> redraw:
-                        DestroyWidgetsInSubtree(vTree, element);
+                        DestroyHostLifecyclesInSubtree(vTree, element);
                         redraw.SetTarget(element);
                         break;
                     case RemoveLast<VisualElement> removeLast:
-                        DestroyRemovedLastWidgets(element, vTree, removeLast);
+                        DestroyRemovedLastHostLifecycles(element, vTree, removeLast);
                         removeLast.SetTarget(element);
                         break;
                     case Reorder<VisualElement> reorder:
@@ -69,7 +69,7 @@ namespace Veauty.UIToolkit
                         }
                         else
                         {
-                            DestroyWidgetsInSubtree(vTree, element);
+                            DestroyHostLifecyclesInSubtree(vTree, element);
                         }
                         break;
                     default:
@@ -130,7 +130,7 @@ namespace Veauty.UIToolkit
             return i;
         }
 
-        private static void DestroyRemovedLastWidgets(
+        private static void DestroyRemovedLastHostLifecycles(
             VisualElement ve,
             IVTree vTree,
             RemoveLast<VisualElement> removeLast
@@ -143,35 +143,25 @@ namespace Veauty.UIToolkit
             if (childOffset < 0) childOffset = 0;
             for (var i = removeLast.length; i < removeLast.length + removeLast.diff; i++)
             {
-                DestroyWidgetsInSubtree(kids[i], ve[childOffset + i]);
+                DestroyHostLifecyclesInSubtree(kids[i], ve[childOffset + i]);
             }
         }
 
-        private static void DestroyWidgetsInSubtree(IVTree vTree, VisualElement ve)
+        private static void DestroyHostLifecyclesInSubtree(IVTree vTree, VisualElement ve)
         {
-            if (vTree is Widget<VisualElement> widget)
+            if (vTree is IHostLifecycleTree<VisualElement> lifecycleTree)
             {
-                widget.Destroy(ve);
-                DestroyWidgetsInRenderedWidgetTree(widget.Render(), ve);
-                return;
+                var lifecycles = lifecycleTree.GetHostLifecycles();
+                for (var i = lifecycles.Length - 1; i >= 0; i--)
+                {
+                    lifecycles[i].Destroy(ve);
+                }
             }
 
-            DestroyChildWidgets(vTree, ve);
+            DestroyChildHostLifecycles(vTree, ve);
         }
 
-        private static void DestroyWidgetsInRenderedWidgetTree(IVTree renderedTree, VisualElement ve)
-        {
-            if (renderedTree is Widget<VisualElement> widget)
-            {
-                widget.Destroy(ve);
-                DestroyWidgetsInRenderedWidgetTree(widget.Render(), ve);
-                return;
-            }
-
-            DestroyChildWidgets(renderedTree, ve);
-        }
-
-        private static void DestroyChildWidgets(IVTree vTree, VisualElement ve)
+        private static void DestroyChildHostLifecycles(IVTree vTree, VisualElement ve)
         {
             if (!(vTree is IParent parent)) return;
 
@@ -181,7 +171,7 @@ namespace Veauty.UIToolkit
             var childCount = kids.Length < (ve.childCount - childOffset) ? kids.Length : (ve.childCount - childOffset);
             for (var i = 0; i < childCount; i++)
             {
-                DestroyWidgetsInSubtree(kids[i], ve[childOffset + i]);
+                DestroyHostLifecyclesInSubtree(kids[i], ve[childOffset + i]);
             }
         }
 
