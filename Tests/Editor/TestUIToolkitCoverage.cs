@@ -20,7 +20,7 @@ namespace Veauty.UIToolkit.Tests
         {
             var element = V.Button(text: "Click");
             Assert.IsNotNull(element);
-            var tree = element.Of();
+            var tree = element.Render();
             Assert.IsNotNull(tree);
         }
 
@@ -109,7 +109,7 @@ namespace Veauty.UIToolkit.Tests
         [Test]
         public void Render_Button()
         {
-            var tree = V.Button(text: "Click").Of();
+            var tree = V.Button(text: "Click").Render();
             var ve = Renderer.Render(tree);
             Assert.IsNotNull(ve);
             Assert.IsInstanceOf<UnityEngine.UIElements.Button>(ve);
