@@ -32,9 +32,31 @@ namespace Veauty.UIToolkit
 
         public VeautyElement(
             VisualElement mounter,
+            System.Func<State, System.Action<System.Func<State, State>>, IVTree> renderFunc,
+            State state = default
+        )
+        {
+            this.mounter = mounter;
+            this.renderFunc = (s, setState) => renderFunc(s, update => setState(update(s)));
+            this._state = state;
+            this.oldTree = this.renderFunc(this.state, s => this.state = s);
+
+            Render();
+        }
+
+        public VeautyElement(
+            VisualElement mounter,
             System.Func<State, IVTree> renderFunc,
             State state = default
-        ) : this(mounter, (s, _) => renderFunc(s), state) { }
+        )
+        {
+            this.mounter = mounter;
+            this.renderFunc = (s, _) => renderFunc(s);
+            this._state = state;
+            this.oldTree = this.renderFunc(this.state, s => this.state = s);
+
+            Render();
+        }
 
         public void ForceUpdate()
         {
