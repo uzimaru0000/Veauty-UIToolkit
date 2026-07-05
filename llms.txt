@@ -1,0 +1,21 @@
+# Veauty-UIToolkit
+
+> Declarative, React-like UI construction for Unity UI Toolkit (UIElements): renders Veauty virtual trees into VisualElement hierarchies and keeps them in sync via diff/patch.
+
+Unity package `com.uzimaru.veauty-uitoolkit` (assembly `Veauty.UIToolkit`), depending on the core `com.uzimaru.veauty`. Mount with `VeautyElement<State>`, build trees with the `V` factory (`Veauty.UIToolkit.Presets`), style with inline USS attributes, `StyleBuilder`, and managed USS classes.
+
+## Docs
+
+- [Manual](Documentation~/com.uzimaru.veauty-uitoolkit.md): entry-point manual
+- [Getting started](Documentation~/getting-started.md): install + minimal example, line by line
+- [Architecture](Documentation~/architecture.md): render cycle, diff/patch, lifecycle ordering, uGUI comparison
+- [Elements](Documentation~/elements.md): VeautyElement, control catalog, V factory, Element builder
+- [Styling](Documentation~/styling.md): style attributes, StyleBuilder, ClassName/ClassList, StyleSheetAttr
+- [Events](Documentation~/events.md): callback de-duplication, OnClick, SetValueWithoutNotify
+- [API reference](Documentation~/api-reference.md): full public API
+- [Agent guide](AGENTS.md): rules and pitfalls for coding agents
+
+## Optional
+
+- [日本語ドキュメント](Documentation~/ja/com.uzimaru.veauty-uitoolkit.md): Japanese manual
+- [Changelog](CHANGELOG.md): version history

@@ -29,10 +29,11 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using Veauty;
 using Veauty.UIToolkit;
+using Veauty.UIToolkit.Presets;
 
 public class CounterPanel : MonoBehaviour
 {
-    record CounterState(int Count);
+    record struct CounterState(int Count);
 
     void Start()
     {
@@ -134,14 +135,12 @@ V.Box(extras: new IAttribute<VisualElement>[] {
 ### Style Builder (fluent API)
 
 ```csharp
-V.Box(extras: new IAttribute<VisualElement>[] {
-    new Style.Set
-        .FlexDirection(FlexDirection.Row)
-        .Padding(new StyleLength(16))
-        .BackgroundColor(Color.gray)
-        .BorderRadius(new StyleLength(8))
-        .Build()
-})
+V.Box(extras: Style.Set
+    .FlexDirection(UnityEngine.UIElements.FlexDirection.Row)
+    .Padding(new StyleLength(16))
+    .BackgroundColor(Color.gray)
+    .BorderRadius(new StyleLength(8))
+    .Build())
 ```
 
 ### 主なスタイル属性
@@ -168,6 +167,13 @@ V.Box(extras: new IAttribute<VisualElement>[] {
 | `Enabled(bool)` | 有効/無効 |
 | `PickingMode(PickingMode)` | ピッキングモード |
 | `Tooltip(string)` | ツールチップ |
+
+## ドキュメント
+
+- [マニュアル](Documentation~/ja/com.uzimaru.veauty-uitoolkit.md) — フルマニュアル (はじめに、アーキテクチャ、要素、スタイリング、イベント)
+- [API リファレンス](Documentation~/ja/api-reference.md) — 全公開型とメンバー
+- [エージェントガイド](AGENTS.md) — コーディングエージェント向けのルール・パターン・注意点 (英語)
+- [Changelog](CHANGELOG.md) — バージョン履歴 (英語)
 
 ## uGUI パッケージとの違い
 

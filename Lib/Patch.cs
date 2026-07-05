@@ -5,8 +5,26 @@ using Veauty.Patch;
 
 namespace Veauty.UIToolkit
 {
+    /// <summary>
+    /// Applies patches produced by <see cref="Diff{T}.Calc"/> to a mounted
+    /// <see cref="VisualElement"/> hierarchy.
+    /// </summary>
     public static class Patch
     {
+        /// <summary>
+        /// Applies the given patches to the element hierarchy that was rendered from
+        /// <paramref name="oldVTree"/>.
+        /// </summary>
+        /// <param name="rootElement">The root element previously rendered from <paramref name="oldVTree"/>.</param>
+        /// <param name="oldVTree">The virtual tree the current hierarchy was rendered from; used to walk the hierarchy and locate patch targets by index.</param>
+        /// <param name="patches">The patch list from <see cref="Diff{T}.Calc"/>. Must be ordered by tree index, as produced by the diff.</param>
+        /// <returns>The (possibly replaced) root element. Redraw/Attach patches on the root return a newly created element.</returns>
+        /// <remarks>
+        /// Before applying, each patch is bound to its target element by traversing
+        /// <paramref name="oldVTree"/> alongside the real hierarchy. Host lifecycle
+        /// <c>Destroy</c> callbacks are invoked (children first) for subtrees that are removed or
+        /// redrawn. Returns <paramref name="rootElement"/> unchanged when the patch list is empty.
+        /// </remarks>
         public static VisualElement Apply(VisualElement rootElement, IVTree oldVTree, IPatch<VisualElement>[] patches)
         {
             if (patches.Length == 0)

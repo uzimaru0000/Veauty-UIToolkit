@@ -3,6 +3,9 @@ using UnityEngine.UIElements;
 
 namespace Veauty.UIToolkit
 {
+    // Tracks, per element, the USS classes that Veauty added via ClassName/ClassList.
+    // Replace removes only those tracked classes before adding the new set, so classes
+    // added by UI Toolkit itself or by user code outside Veauty are never touched.
     internal static class ManagedClassList
     {
         private static readonly Dictionary<VisualElement, HashSet<string>> managed = new();

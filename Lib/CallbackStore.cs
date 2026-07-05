@@ -3,6 +3,9 @@ using UnityEngine.UIElements;
 
 namespace Veauty.UIToolkit
 {
+    // De-duplicates ChangeEvent callbacks per (element, key): Set unregisters the callback
+    // previously stored under the same key before registering the new one, so re-applying an
+    // OnValueChanged attribute on every render never stacks duplicate handlers.
     internal static class CallbackStore
     {
         private static readonly Dictionary<(VisualElement, string), object> store = new();

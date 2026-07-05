@@ -29,10 +29,11 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using Veauty;
 using Veauty.UIToolkit;
+using Veauty.UIToolkit.Presets;
 
 public class CounterPanel : MonoBehaviour
 {
-    record CounterState(int Count);
+    record struct CounterState(int Count);
 
     void Start()
     {
@@ -134,14 +135,12 @@ V.Box(extras: new IAttribute<VisualElement>[] {
 ### Style Builder (fluent API)
 
 ```csharp
-V.Box(extras: new IAttribute<VisualElement>[] {
-    new Style.Set
-        .FlexDirection(FlexDirection.Row)
-        .Padding(new StyleLength(16))
-        .BackgroundColor(Color.gray)
-        .BorderRadius(new StyleLength(8))
-        .Build()
-})
+V.Box(extras: Style.Set
+    .FlexDirection(UnityEngine.UIElements.FlexDirection.Row)
+    .Padding(new StyleLength(16))
+    .BackgroundColor(Color.gray)
+    .BorderRadius(new StyleLength(8))
+    .Build())
 ```
 
 ### Style attributes
@@ -168,6 +167,13 @@ Available on all controls:
 | `Enabled(bool)` | Enable/disable |
 | `PickingMode(PickingMode)` | Picking mode |
 | `Tooltip(string)` | Tooltip text |
+
+## Documentation
+
+- [Manual](Documentation~/com.uzimaru.veauty-uitoolkit.md) — full manual (getting started, architecture, elements, styling, events)
+- [API reference](Documentation~/api-reference.md) — every public type and member
+- [Agent guide](AGENTS.md) — rules, patterns, and pitfalls for coding agents
+- [Changelog](CHANGELOG.md) — version history
 
 ## Comparison with uGUI package
 

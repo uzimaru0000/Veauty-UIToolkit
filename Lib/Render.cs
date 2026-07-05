@@ -4,8 +4,33 @@ using Veauty.VTree;
 
 namespace Veauty.UIToolkit
 {
+    /// <summary>
+    /// Renders a Veauty virtual tree into a fresh UI Toolkit <see cref="VisualElement"/> hierarchy.
+    /// </summary>
+    /// <remarks>
+    /// Used by <see cref="VeautyElement{State}"/> for the initial mount and by <see cref="Patch"/>
+    /// when a subtree must be (re)created (redraw, append, reorder inserts).
+    /// </remarks>
     public static class Renderer
     {
+        /// <summary>
+        /// Builds a <see cref="VisualElement"/> hierarchy from the given virtual tree.
+        /// </summary>
+        /// <param name="vTree">The virtual tree to render. Wrappers (<see cref="IVTreeWrapper"/>) are unwrapped first.</param>
+        /// <returns>The root <see cref="VisualElement"/> of the rendered hierarchy.</returns>
+        /// <exception cref="ArgumentException">
+        /// Thrown when the tree contains a node type this renderer does not support, or when a typed
+        /// node's component type does not inherit from <see cref="VisualElement"/>.
+        /// </exception>
+        /// <remarks>
+        /// For each node the order is: create the element (named after the node's tag), run
+        /// <c>IHostLifecycle.Init</c>, apply attributes, render children, then run
+        /// <c>IHostLifecycle.AfterRenderKids</c>.
+        /// A bare <see cref="FunctionComponentNode"/> passed here is resolved with a fresh, throwaway
+        /// <see cref="HookRuntime"/>, so its hook state is not preserved across renders. To keep hook
+        /// state, mount through <see cref="VeautyElement{State}"/>, which resolves trees with a
+        /// persistent runtime before rendering.
+        /// </remarks>
         public static VisualElement Render(IVTree vTree)
         {
             if (vTree is IVTreeWrapper wrapper)

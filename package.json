@@ -4,7 +4,13 @@
   "version": "0.5.0",
   "unity": "6000.5",
   "description": "Veauty widget and attributes for UI Toolkit",
-  "keywords": ["Library", "Virtual-Dom", "VDOM", "UIToolkit"],
+  "license": "MIT",
+  "keywords": [
+    "Library",
+    "Virtual-Dom",
+    "VDOM",
+    "UIToolkit"
+  ],
   "category": "Library",
   "dependencies": {
     "com.uzimaru.veauty": "https://github.com/uzimaru0000/Veauty.git#v0.5.0"
