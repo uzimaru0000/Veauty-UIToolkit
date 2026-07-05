@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.1] - 2026-07-06
+
+### Added
+- Package documentation under `Documentation~/` (manual, getting started, architecture, elements, styling, events, API reference) with Japanese translations under `Documentation~/ja/`.
+- XML documentation comments (`///`) on all public APIs in `Lib/`.
+- `AGENTS.md`, `CLAUDE.md`, and `llms.txt` for coding agents.
+- This changelog.
+- MIT `LICENSE` file and `license` field in `package.json`.
+
+### Changed
+- Dependency `com.uzimaru.veauty` now references `v0.5.1`.
+
+### Fixed
+- README examples: state type is now `record struct` (satisfying the `State : struct` constraint), added the missing `using Veauty.UIToolkit.Presets;`, and corrected the `StyleBuilder` example to valid C#.
+
 ## [0.5.0] - 2026-07-01
 
 ### Added
